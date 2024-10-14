@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Name</title>
+    <link href="tailwind.min.css" rel="stylesheet">
+    <style>
+        .sparkles {
+            background-image: url('stardust.png');
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center h-screen sparkles bg-black text-white">
+    <div class="bg-gray-800 bg-opacity-60 p-8 rounded-lg shadow-xl max-w-md w-full text-center">
+        <p class="text-2xl font-bold mb-4 text-white" id="quote">Loading quote...</p>
+        <p class="text-lg font-light text-gray-300" id="author">—</p>
+        <button onclick="getQuote()"
+            class="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-full transition-all">
+            Random Quote
+        </button>
+    </div>
+
+    <!-- Premium Popup -->
+    <div id="premiumPopup"
+        class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center transition-opacity duration-300">
+        <div
+            class="bg-gray-800 p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform scale-100 transition-transform duration-300">
+            <h2 class="text-4xl font-extrabold text-white mb-4">Upgrade to Premium</h2>
+            <p class="text-lg text-gray-300 mb-6 leading-relaxed">
+                Unlock exclusive features for only <span class="text-yellow-400 font-semibold">$299/month</span>.
+            </p>
+            <ul class="text-left text-gray-300 mb-6 space-y-2">
+                <li><span class="text-yellow-400">✔</span> Infinite inspiration - Quotes NEVER repeat!</li>
+                <li><span class="text-yellow-400">✔</span> Unlock new EXCLUSIVE quote packs that will burn the eyes of
+                    regular users</li>
+                <li><span class="text-yellow-400">✔</span> 24/7 access to our Quote Hotline for emergency motivation
+                </li>
+                <li><span class="text-yellow-400">✔</span> Free helper elf that sits on your desk (Dont worry, he is
+                    being paid)</li>
+                <li><span class="text-yellow-400">✔</span> Instant 25 billion dollars fall from the sky, onto your
+                    doorstep</li>
+                <li><span class="text-yellow-400">✔</span> Unlock the secret to life (but you forget if you cancel your
+                    subscription)</li>
+            </ul>
+            <button onclick="spamPopups()"
+                class="bg-gradient-to-r from-red-500 to-yellow-400 hover:from-red-600 hover:to-yellow-500 text-white py-3 px-8 rounded-full text-lg transition-all ease-in-out transform hover:scale-105">
+                Get Premium
+            </button>
+            <br>
+            <button onclick="togglePopup()"
+                class="text-gray-400 mt-4 text-sm underline hover:text-gray-200 transition-all">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function togglePopup() {
+            const popup = document.getElementById('premiumPopup');
+            popup.classList.toggle('hidden');
+        }
+
+        setTimeout(togglePopup, 30 * 1000);
+
+        function spamPopups() {
+            const createImage = () => {
+                const randomIndex = Math.floor(Math.random() * 18);
+                const imgSrc = `img/pic_${randomIndex}.png`;
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.style.position = 'absolute';
+                const randomX = Math.floor(Math.random() * window.screen.width);
+                const randomY = Math.floor(Math.random() * window.screen.height );
+                img.style.left = `${randomX}px`;
+                img.style.top = `${randomY}px`;
+                document.body.appendChild(img);
+
+                // 1/10 second = 100 milliseconds
+                setTimeout(createImage, 100);
+            };
+
+            createImage();
+        }
+
+        // Lets not kill all our key uses just for testing purposes..
+        /*async function getQuote() {
+            try {
+                const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=inspirational', {
+                    method: 'GET',
+                    headers: {
+                        'X-Api-Key': 'gK5+HGqTaSjo/WuDMCepLw==qoHXbv2YUqgvyEjR',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                const quote = data[0].quote;
+                const author = data[0].author;
+
+                document.getElementById('quote').innerText = `${quote}`;
+                document.getElementById('author').innerText = `— ${author}`;
+            } catch (error) {
+                console.error('Error: ', error);
+            }
+        }*/
+
+        async function getQuote() {
+            try {
+                const response = await fetch('quotes.json');
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const quotes = await response.json();
+                const randomIndex = Math.floor(Math.random() * quotes.length);
+                const { quote, author } = quotes[randomIndex];
+
+                document.getElementById('quote').innerText = `${quote}`;
+                document.getElementById('author').innerText = `— ${author}`;
+            } catch (error) {
+                console.error('Error: ', error);
+            }
+        }
+
+        window.onload = getQuote;
+
+    </script>
+</body>
+
+</html>
